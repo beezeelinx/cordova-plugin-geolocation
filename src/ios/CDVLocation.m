@@ -145,7 +145,7 @@
         // self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
 
         // Get all possible location events for high accuracy
-        self.locationManager.distanceFilter = kCLDistanceFilterNone
+        self.locationManager.distanceFilter = kCLDistanceFilterNone;
         // Get best accuracy for navigation
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
     } else {
