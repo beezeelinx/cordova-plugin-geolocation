@@ -82,6 +82,7 @@
 
 - (BOOL)isLocationServicesEnabled // returns true if GLOBAL system-wide location services are enabled (Settings > Privacy)
 {
+    BOOL locationServicesEnabledInstancePropertyAvailable = [self.locationManager respondsToSelector:@selector(locationServicesEnabled)]; // iOS 3.x
     BOOL locationServicesEnabledClassPropertyAvailable = [CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]; // iOS 4.x
 
     if (locationServicesEnabledClassPropertyAvailable) { // iOS 4.x
@@ -302,9 +303,14 @@
         [returnInfo setObject:[NSNumber numberWithDouble:lInfo.altitude] forKey:@"altitude"];
         [returnInfo setObject:[NSNumber numberWithDouble:lInfo.coordinate.latitude] forKey:@"latitude"];
         [returnInfo setObject:[NSNumber numberWithDouble:lInfo.coordinate.longitude] forKey:@"longitude"];
-
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
-        [result setKeepCallbackAsBool:keepCallback];
+        
+        if([NSJSONSerialization isValidJSONObject:returnInfo]){
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnInfo];
+            [result setKeepCallbackAsBool:keepCallback];
+        }else{
+            // return error
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageToErrorObject:POSITIONUNAVAILABLE];
+        }
     }
     if (result) {
         [self.commandDelegate sendPluginResult:result callbackId:callbackId];
